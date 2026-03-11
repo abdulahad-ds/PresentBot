@@ -4,6 +4,12 @@ import json
 import queue
 import sounddevice as sd
 import time
+from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+from ctypes import cast, POINTER
+from comtypes import CLSCTX_ALL
+import pygame
+
+
 
 ROLL_NO=["two","five","nine","four"]
 NAME=["muhammad","abdul","muhammad abdul","muhammadabdul","muhammadabdulahad", "abdulahad","ahad"]
@@ -81,9 +87,24 @@ recognizer = vosk.KaldiRecognizer(model, SAMPLE_RATE,grammar)
 
 audio_queue = queue.Queue()
 present_count=0
+pygame.init()
+pygame.mixer.init()
 
 def alarm():
-    pass
+    devices = AudioUtilities.GetSpeakers()
+    interface = devices._dev.Activate(       
+        IAudioEndpointVolume._iid_, CLSCTX_ALL, None
+    )
+    volume = cast(interface, POINTER(IAudioEndpointVolume))
+    volume.SetMute(0, None)
+    volume.SetMasterVolumeLevelScalar(1.0, None)
+    print("Volume maximized!")
+
+    pygame.mixer.music.load("alarm.mp3")
+    pygame.mixer.music.play(-1)
+    print("ALARM! Press Enter to stop...")
+    input()
+    pygame.mixer.music.stop()
 
 def audio_callback(indata, frames, time, status):
     audio_queue.put(bytes(indata))
@@ -168,3 +189,4 @@ with sd.RawInputStream(
             timer4=time.time()
             print(f"attendance confirmed with {attendance_confidence} points")
             alarm()
+            break
