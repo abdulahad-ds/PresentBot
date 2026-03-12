@@ -1,0 +1,14 @@
+wave
+sounddevice
+time
+pycaw
+ctypes
+comtypes
+pygame
+requests
+io
+pyautogui
+win32gui
+re
+num2words
+tkinter
