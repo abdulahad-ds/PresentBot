@@ -12,3 +12,4 @@ win32gui
 re
 num2words
 tkinter
+threading
